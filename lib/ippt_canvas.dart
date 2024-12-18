@@ -12,7 +12,7 @@ class _IpptCanvasState extends State<IpptCanvas> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      return Stack(
+      return const Stack(
         children: [
           IpptBuilderItem(),
           IpptBuilderItem(),
