@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:ippt/ippt_builder.dart';
+import 'package:ippt/pages/builder/builder_page.dart';
+import 'package:ippt/pages/home/home_page.dart';
 import 'package:ippt/test_widget.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const IpptApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class IpptApp extends StatelessWidget {
+  const IpptApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Ippt',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.deepPurple, brightness: Brightness.light),
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: "/",
       routes: {
-        "/": (context) => const IpptBuilder(),
+        "/": (context) => const HomePage(),
+        "/builder": (context) => const BuilderPage(),
         "/test": (context) => const TestWidget()
       },
     );
