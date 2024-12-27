@@ -26,7 +26,8 @@ class WorkCanvas extends StatelessWidget {
               width: state.canvasWidth,
               height: state.canvasHeight,
               child: Stack(
-                children: state.components
+                children: (List.from(state.components)
+                      ..sort((a, b) => a.geometry.z.compareTo(b.geometry.z)))
                     .map((component) => BuilderItem(component: component))
                     .toList(),
               ),

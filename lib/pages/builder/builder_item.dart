@@ -47,6 +47,7 @@ class BuilderItem extends StatelessWidget {
         left: component.geometry.x,
         top: component.geometry.y,
         child: GestureDetector(
+          onSecondaryTapDown: (details) => onSecondaryTapDown(details, context),
           onTap: () => GetIt.I<IpptBloc>().add(
             ToggleComponentSelection(
               id: component.id,
@@ -76,16 +77,41 @@ class BuilderItem extends StatelessWidget {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
+            // Component ID display at top-left
+            Positioned(
+              left: handleRadius,
+              top: -25,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  component.id.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ),
+
             Positioned(
               left: handleRadius,
               top: handleRadius,
               child: GestureDetector(
+                onSecondaryTapDown: (details) =>
+                    onSecondaryTapDown(details, context),
                 onTap: () => GetIt.I<IpptBloc>().add(
                   ToggleComponentSelection(
                     id: component.id,
                     isSelected: false,
                   ),
                 ),
+                onSecondaryTap: () {
+                  print("object");
+                },
                 onPanUpdate: (details) {
                   GetIt.I<IpptBloc>().add(
                     UpdateComponentPosition(
@@ -243,6 +269,75 @@ class BuilderItem extends StatelessWidget {
       default:
         return Container();
     }
+  }
+
+  void onSecondaryTapDown(TapDownDetails details, BuildContext context) {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        details.globalPosition,
+        details.globalPosition,
+      ),
+      Offset.zero & overlay.size,
+    );
+    showMenu(
+      context: context,
+      position: position,
+      items: [
+        PopupMenuItem(
+          onTap: () {
+            GetIt.I<IpptBloc>().add(RemoveComponent(id: component.id));
+          },
+          child: const Row(
+            children: [
+              Icon(Icons.delete, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Delete'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () {
+            GetIt.I<IpptBloc>().add(DuplicateComponent(component: component));
+          },
+          child: const Row(
+            children: [
+              Icon(Icons.copy),
+              SizedBox(width: 8),
+              Text('Duplicate'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () {
+            GetIt.I<IpptBloc>()
+                .add(UpdateComponentZIndex(id: component.id, moveFront: true));
+          },
+          child: const Row(
+            children: [
+              Icon(Icons.flip_to_front),
+              SizedBox(width: 8),
+              Text('Bring to Front'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () {
+            // Add send to back functionality
+            GetIt.I<IpptBloc>()
+                .add(UpdateComponentZIndex(id: component.id, moveFront: false));
+          },
+          child: const Row(
+            children: [
+              Icon(Icons.flip_to_back),
+              SizedBox(width: 8),
+              Text('Send to Back'),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   @override

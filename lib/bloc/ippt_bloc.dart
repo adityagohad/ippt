@@ -33,6 +33,7 @@ class IpptBloc extends Bloc<IpptEvent, IpptState> {
 
     on<RemoveComponent>((event, emit) {
       emit(IpptState.copyWith(state)
+        ..selectedComponent = null
         ..components.removeWhere((c) => c.id == event.id));
     });
 
@@ -41,6 +42,30 @@ class IpptBloc extends Bloc<IpptEvent, IpptState> {
         ..components = state.components.map((component) {
           if (component.id == event.id) {
             component.data = event.data;
+          }
+          return component;
+        }).toList());
+    });
+
+    on<DuplicateComponent>((event, emit) {
+      emit(IpptState.copyWith(state)
+        ..components.add(Component(
+            id: generateUniqueId(state.components),
+            type: event.component.type,
+            data: event.component.data,
+            geometry: Geometry(
+                x: event.component.geometry.x + 10,
+                y: event.component.geometry.y + 10,
+                width: event.component.geometry.width,
+                height: event.component.geometry.height))));
+    });
+
+    on<UpdateComponentZIndex>((event, emit) {
+      emit(IpptState.copyWith(state)
+        ..components = state.components.map((component) {
+          if (component.id == event.id) {
+            component.geometry.z =
+                component.geometry.z + (event.moveFront ? 1 : -1);
           }
           return component;
         }).toList());

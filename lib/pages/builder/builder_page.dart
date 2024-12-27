@@ -33,27 +33,33 @@ class BuilderPage extends StatelessWidget {
                           child: const ComponentMenu())),
                   Expanded(
                       flex: 7,
-                      child: Container(
-                        color: Theme.of(context).canvasColor,
-                        child: Center(
-                            child: Padding(
-                          padding: const EdgeInsets.all(32),
-                          child: AspectRatio(
-                            aspectRatio: state.aspectRatio.value,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context).cardColor,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        offset: const Offset(0, 10),
-                                        blurRadius: 30,
-                                        spreadRadius: 10,
-                                        color: Theme.of(context).shadowColor)
-                                  ]),
-                              child: const WorkCanvas(),
+                      child: GestureDetector(
+                        onTap: () {
+                          GetIt.I<IpptBloc>().add(ToggleComponentSelection(
+                              id: -1, isSelected: false));
+                        },
+                        child: Container(
+                          color: Theme.of(context).canvasColor,
+                          child: Center(
+                              child: Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: AspectRatio(
+                              aspectRatio: state.aspectRatio.value,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context).cardColor,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          offset: const Offset(0, 10),
+                                          blurRadius: 30,
+                                          spreadRadius: 10,
+                                          color: Theme.of(context).shadowColor)
+                                    ]),
+                                child: const WorkCanvas(),
+                              ),
                             ),
-                          ),
-                        )),
+                          )),
+                        ),
                       )),
                   Expanded(
                       flex: 3,

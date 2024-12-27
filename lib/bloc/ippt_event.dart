@@ -73,6 +73,17 @@ class UpdateComponentData extends IpptEvent {
   UpdateComponentData({required this.id, required this.data});
 }
 
+class DuplicateComponent extends IpptEvent {
+  final Component component;
+  DuplicateComponent({required this.component});
+}
+
+class UpdateComponentZIndex extends IpptEvent {
+  final int id;
+  final bool moveFront;
+  UpdateComponentZIndex({required this.id, required this.moveFront});
+}
+
 class ToggleComponentSelection extends IpptEvent {
   final int id;
   final bool isSelected;

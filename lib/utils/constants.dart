@@ -21,3 +21,5 @@ const Map<String, dynamic> image = {
   'url':
       'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
 };
+
+const double builderItemTopPadding = 25.0;
