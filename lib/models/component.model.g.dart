@@ -20,7 +20,7 @@ Component _$ComponentFromJson(Map<String, dynamic> json) => Component(
 Map<String, dynamic> _$ComponentToJson(Component instance) => <String, dynamic>{
       'id': instance.id,
       'type': _$TypeEnumMap[instance.type]!,
-      'geometry': instance.geometry,
+      'geometry': Component._geometryToJson(instance.geometry),
       'data': instance.data,
       'loadIndex': instance.loadIndex,
       'isSelected': instance.isSelected,

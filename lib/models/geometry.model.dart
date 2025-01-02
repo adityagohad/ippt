@@ -17,6 +17,15 @@ class Geometry {
       this.width = 100,
       this.height = 100});
 
+  Geometry.copyWith(Geometry geometry)
+      : this(
+          x: geometry.x + 10,
+          y: geometry.y + 10,
+          z: geometry.z + 1,
+          width: geometry.width,
+          height: geometry.height,
+        );
+
   factory Geometry.fromJson(Map<String, dynamic> json) =>
       _$GeometryFromJson(json);
   Map<String, dynamic> toJson() => _$GeometryToJson(this);

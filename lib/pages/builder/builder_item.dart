@@ -29,45 +29,161 @@ class BuilderItem extends StatelessWidget {
     );
   }
 
-  Widget _buildContainer(BuildContext context) {
-    final container = Container(
-      width: component.geometry.width,
-      height: component.geometry.height,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        border: Border.all(
-          color: component.isSelected ? Colors.blue : Colors.transparent,
-        ),
-      ),
-      child: _buildWidget(component),
-    );
-
-    if (!component.isSelected) {
-      return Positioned(
-        left: component.geometry.x,
-        top: component.geometry.y,
-        child: GestureDetector(
-          onSecondaryTapDown: (details) => onSecondaryTapDown(details, context),
-          onTap: () => GetIt.I<IpptBloc>().add(
-            ToggleComponentSelection(
-              id: component.id,
-              isSelected: true,
+  List<Widget> _buildWidgetHelpers() {
+    return [
+      //Component ID display at top-left
+      Positioned(
+        left: handleRadius,
+        top: -25,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            component.id.toString(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
             ),
           ),
-          onPanUpdate: (details) {
+        ),
+      ),
+      // Left handle
+      Positioned(
+        left: 0,
+        top: handleRadius + component.geometry.height / 2 - handleRadius,
+        child: _buildCircleHandle(
+          onDrag: (details) {
             GetIt.I<IpptBloc>().add(
-              UpdateComponentPosition(
+              UpdateComponentWidth(
+                id: component.id,
+                delta: details.delta.dx,
+                fromLeft: true,
+              ),
+            );
+          },
+        ),
+      ),
+      // Right handle
+      Positioned(
+        right: 0,
+        top: handleRadius + component.geometry.height / 2 - handleRadius,
+        child: _buildCircleHandle(
+          onDrag: (details) {
+            GetIt.I<IpptBloc>().add(
+              UpdateComponentWidth(
+                id: component.id,
+                delta: details.delta.dx,
+              ),
+            );
+          },
+        ),
+      ),
+      // Top handle
+      Positioned(
+        top: 0,
+        left: handleRadius + component.geometry.width / 2 - handleRadius,
+        child: _buildCircleHandle(
+          onDrag: (details) {
+            GetIt.I<IpptBloc>().add(
+              UpdateComponentHeight(
+                id: component.id,
+                delta: details.delta.dy,
+                fromTop: true,
+              ),
+            );
+          },
+        ),
+      ),
+      // Bottom handle
+      Positioned(
+        bottom: 0,
+        left: handleRadius + component.geometry.width / 2 - handleRadius,
+        child: _buildCircleHandle(
+          onDrag: (details) {
+            GetIt.I<IpptBloc>().add(
+              UpdateComponentHeight(
+                id: component.id,
+                delta: details.delta.dy,
+              ),
+            );
+          },
+        ),
+      ),
+      // Top-left corner
+      Positioned(
+        left: 0,
+        top: 0,
+        child: _buildCircleHandle(
+          onDrag: (details) {
+            GetIt.I<IpptBloc>().add(
+              UpdateComponentCorner(
+                id: component.id,
+                dx: details.delta.dx,
+                dy: details.delta.dy,
+                left: true,
+                top: true,
+              ),
+            );
+          },
+        ),
+      ),
+      // Top-right corner
+      Positioned(
+        right: 0,
+        top: 0,
+        child: _buildCircleHandle(
+          onDrag: (details) {
+            GetIt.I<IpptBloc>().add(
+              UpdateComponentCorner(
+                id: component.id,
+                dx: details.delta.dx,
+                dy: details.delta.dy,
+                top: true,
+              ),
+            );
+          },
+        ),
+      ),
+      // Bottom-left corner
+      Positioned(
+        left: 0,
+        bottom: 0,
+        child: _buildCircleHandle(
+          onDrag: (details) {
+            GetIt.I<IpptBloc>().add(
+              UpdateComponentCorner(
+                id: component.id,
+                dx: details.delta.dx,
+                dy: details.delta.dy,
+                left: true,
+              ),
+            );
+          },
+        ),
+      ),
+      // Bottom-right corner
+      Positioned(
+        right: 0,
+        bottom: 0,
+        child: _buildCircleHandle(
+          onDrag: (details) {
+            GetIt.I<IpptBloc>().add(
+              UpdateComponentCorner(
                 id: component.id,
                 dx: details.delta.dx,
                 dy: details.delta.dy,
               ),
             );
           },
-          child: container,
         ),
-      );
-    }
+      ),
+    ];
+  }
 
+  Widget _buildContainer(BuildContext context) {
     return Positioned(
       left: component.geometry.x - handleRadius,
       top: component.geometry.y - handleRadius,
@@ -77,40 +193,20 @@ class BuilderItem extends StatelessWidget {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            // Component ID display at top-left
-            Positioned(
-              left: handleRadius,
-              top: -25,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  component.id.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
-
             Positioned(
               left: handleRadius,
               top: handleRadius,
               child: GestureDetector(
-                onSecondaryTapDown: (details) =>
-                    onSecondaryTapDown(details, context),
-                onTap: () => GetIt.I<IpptBloc>().add(
-                  ToggleComponentSelection(
-                    id: component.id,
-                    isSelected: false,
-                  ),
-                ),
-                onSecondaryTap: () {
-                  print("object");
+                onSecondaryTapDown: (details) {
+                  _onSecondaryTapDown(details, context);
+                },
+                onTapDown: (details) {
+                  GetIt.I<IpptBloc>().add(
+                    UpdateComponentSelection(
+                      id: component.id,
+                      isSelected: true,
+                    ),
+                  );
                 },
                 onPanUpdate: (details) {
                   GetIt.I<IpptBloc>().add(
@@ -121,139 +217,22 @@ class BuilderItem extends StatelessWidget {
                     ),
                   );
                 },
-                child: container,
-              ),
-            ),
-            // Left handle
-            Positioned(
-              left: 0,
-              top: handleRadius + component.geometry.height / 2 - handleRadius,
-              child: _buildCircleHandle(
-                onDrag: (details) {
-                  GetIt.I<IpptBloc>().add(
-                    UpdateComponentWidth(
-                      id: component.id,
-                      delta: details.delta.dx,
-                      fromLeft: true,
+                child: Container(
+                  width: component.geometry.width,
+                  height: component.geometry.height,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                      color: component.isSelected
+                          ? Colors.blue
+                          : Colors.transparent,
                     ),
-                  );
-                },
+                  ),
+                  child: _buildWidget(component),
+                ),
               ),
             ),
-            // Right handle
-            Positioned(
-              right: 0,
-              top: handleRadius + component.geometry.height / 2 - handleRadius,
-              child: _buildCircleHandle(
-                onDrag: (details) {
-                  GetIt.I<IpptBloc>().add(
-                    UpdateComponentWidth(
-                      id: component.id,
-                      delta: details.delta.dx,
-                    ),
-                  );
-                },
-              ),
-            ),
-            // Top handle
-            Positioned(
-              top: 0,
-              left: handleRadius + component.geometry.width / 2 - handleRadius,
-              child: _buildCircleHandle(
-                onDrag: (details) {
-                  GetIt.I<IpptBloc>().add(
-                    UpdateComponentHeight(
-                      id: component.id,
-                      delta: details.delta.dy,
-                      fromTop: true,
-                    ),
-                  );
-                },
-              ),
-            ),
-            // Bottom handle
-            Positioned(
-              bottom: 0,
-              left: handleRadius + component.geometry.width / 2 - handleRadius,
-              child: _buildCircleHandle(
-                onDrag: (details) {
-                  GetIt.I<IpptBloc>().add(
-                    UpdateComponentHeight(
-                      id: component.id,
-                      delta: details.delta.dy,
-                    ),
-                  );
-                },
-              ),
-            ),
-            // Top-left corner
-            Positioned(
-              left: 0,
-              top: 0,
-              child: _buildCircleHandle(
-                onDrag: (details) {
-                  GetIt.I<IpptBloc>().add(
-                    UpdateComponentCorner(
-                      id: component.id,
-                      dx: details.delta.dx,
-                      dy: details.delta.dy,
-                      left: true,
-                      top: true,
-                    ),
-                  );
-                },
-              ),
-            ),
-            // Top-right corner
-            Positioned(
-              right: 0,
-              top: 0,
-              child: _buildCircleHandle(
-                onDrag: (details) {
-                  GetIt.I<IpptBloc>().add(
-                    UpdateComponentCorner(
-                      id: component.id,
-                      dx: details.delta.dx,
-                      dy: details.delta.dy,
-                      top: true,
-                    ),
-                  );
-                },
-              ),
-            ),
-            // Bottom-left corner
-            Positioned(
-              left: 0,
-              bottom: 0,
-              child: _buildCircleHandle(
-                onDrag: (details) {
-                  GetIt.I<IpptBloc>().add(
-                    UpdateComponentCorner(
-                      id: component.id,
-                      dx: details.delta.dx,
-                      dy: details.delta.dy,
-                      left: true,
-                    ),
-                  );
-                },
-              ),
-            ),
-            // Bottom-right corner
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: _buildCircleHandle(
-                onDrag: (details) {
-                  GetIt.I<IpptBloc>().add(
-                    UpdateComponentCorner(
-                      id: component.id,
-                      dx: details.delta.dx,
-                      dy: details.delta.dy,
-                    ),
-                  );
-                },
-              ),
-            ),
+            if (component.isSelected) ..._buildWidgetHelpers(),
           ],
         ),
       ),
@@ -271,7 +250,7 @@ class BuilderItem extends StatelessWidget {
     }
   }
 
-  void onSecondaryTapDown(TapDownDetails details, BuildContext context) {
+  void _onSecondaryTapDown(TapDownDetails details, BuildContext context) {
     final RenderBox overlay =
         Overlay.of(context).context.findRenderObject() as RenderBox;
     final RelativeRect position = RelativeRect.fromRect(

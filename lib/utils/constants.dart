@@ -19,7 +19,8 @@ const Map<String, dynamic> text = {
 };
 const Map<String, dynamic> image = {
   'url':
-      'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
+      'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+  'fit': 'contain',
 };
 
 const double builderItemTopPadding = 25.0;

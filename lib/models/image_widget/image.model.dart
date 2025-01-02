@@ -18,6 +18,8 @@ class ImageModel {
     return Image.network(
       url,
       fit: fit,
+      width: 100,
+      height: 100,
     );
   }
 }

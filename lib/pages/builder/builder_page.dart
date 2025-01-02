@@ -17,7 +17,15 @@ class BuilderPage extends StatelessWidget {
       child: BlocBuilder<IpptBloc, IpptState>(
         builder: (context, state) {
           return Scaffold(
-              appBar: AppBar(),
+              appBar: AppBar(
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        GetIt.I<IpptBloc>().add(SavePresentation());
+                      },
+                      icon: const Icon(Icons.save_as_rounded))
+                ],
+              ),
               //bottomNavigationBar: const BottomAppBar(),
               body: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -35,8 +43,8 @@ class BuilderPage extends StatelessWidget {
                       flex: 7,
                       child: GestureDetector(
                         onTap: () {
-                          GetIt.I<IpptBloc>().add(ToggleComponentSelection(
-                              id: -1, isSelected: false));
+                          GetIt.I<IpptBloc>().add(UpdateComponentSelection(
+                              id: null, isSelected: false));
                         },
                         child: Container(
                           color: Theme.of(context).canvasColor,

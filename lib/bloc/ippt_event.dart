@@ -84,8 +84,10 @@ class UpdateComponentZIndex extends IpptEvent {
   UpdateComponentZIndex({required this.id, required this.moveFront});
 }
 
-class ToggleComponentSelection extends IpptEvent {
-  final int id;
+class UpdateComponentSelection extends IpptEvent {
+  final int? id;
   final bool isSelected;
-  ToggleComponentSelection({required this.id, required this.isSelected});
+  UpdateComponentSelection({required this.id, required this.isSelected});
 }
+
+class SavePresentation extends IpptEvent {}

@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:bloc/bloc.dart';
 import 'package:ippt/models/component.model.dart';
 import 'package:ippt/models/geometry.model.dart';
+import 'package:ippt/models/presentation.model.dart';
 import 'package:ippt/utils/canvas_aspect_ratio.dart';
+import 'package:ippt/utils/helper_functions.dart';
 
 part 'ippt_event.dart';
 part 'ippt_state.dart';
@@ -48,16 +52,19 @@ class IpptBloc extends Bloc<IpptEvent, IpptState> {
     });
 
     on<DuplicateComponent>((event, emit) {
+      final List<Component> unseelctedComponentList =
+          state.components.map((component) {
+        component.isSelected = false;
+        return component;
+      }).toList();
+      unseelctedComponentList.add(Component.copyWith(
+          generateUniqueId(state.components), event.component));
       emit(IpptState.copyWith(state)
-        ..components.add(Component(
-            id: generateUniqueId(state.components),
-            type: event.component.type,
-            data: event.component.data,
-            geometry: Geometry(
-                x: event.component.geometry.x + 10,
-                y: event.component.geometry.y + 10,
-                width: event.component.geometry.width,
-                height: event.component.geometry.height))));
+        ..components = unseelctedComponentList
+        ..selectedComponent = state.components.cast<Component?>().firstWhere(
+              (c) => c?.isSelected ?? false,
+              orElse: () => null as Component?,
+            ));
     });
 
     on<UpdateComponentZIndex>((event, emit) {
@@ -152,27 +159,33 @@ class IpptBloc extends Bloc<IpptEvent, IpptState> {
         }).toList());
     });
 
-    on<ToggleComponentSelection>((event, emit) {
+    on<UpdateComponentSelection>((event, emit) {
       emit(IpptState.copyWith(state)
         ..components = state.components.map((component) {
-          component.isSelected = false;
+          if (event.id == null) {
+            component.isSelected = false;
+          }
           if (component.id == event.id) {
             component.isSelected = event.isSelected;
+          } else {
+            component.isSelected = false;
           }
           return component;
         }).toList()
-        ..selectedComponent = event.isSelected
-            ? state.components.firstWhere((c) => c.id == event.id)
-            : null);
+        ..selectedComponent = state.components.cast<Component?>().firstWhere(
+              (c) => c?.isSelected ?? false,
+              orElse: () => null as Component?,
+            ));
+    });
+
+    on<SavePresentation>((event, emit) {
+      Presentation presentation = Presentation(
+          aspectRatio: state.aspectRatio,
+          canvasWidth: state.canvasWidth,
+          canvasHeight: state.canvasHeight,
+          components: state.components);
+
+      print(presentation.toJson());
     });
   }
-}
-
-int generateUniqueId(List<Component> components) {
-  if (components.isEmpty) return 1;
-
-  int maxId =
-      components.map((c) => c.id).reduce((max, id) => id > max ? id : max);
-
-  return maxId + 1;
 }
