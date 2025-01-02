@@ -22,7 +22,7 @@ class IpptApp extends StatelessWidget {
             seedColor: Colors.deepPurple, brightness: Brightness.light),
         useMaterial3: true,
       ),
-      initialRoute: "/presentation",
+      initialRoute: "/",
       routes: {
         "/": (context) => const HomePage(),
         "/builder": (context) => const BuilderPage(),

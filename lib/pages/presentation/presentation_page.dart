@@ -20,7 +20,6 @@ class _PresentationPageState extends State<PresentationPage> {
   late CanvasAspectRatio aspectRatio;
   @override
   void initState() {
-    print(widget.presentation.toJson());
     components = widget.presentation.components;
     canvasWidth = widget.presentation.canvasWidth;
     canvasHeight = widget.presentation.canvasHeight;

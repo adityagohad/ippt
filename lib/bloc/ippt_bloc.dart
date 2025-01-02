@@ -1,5 +1,4 @@
-import 'dart:math';
-
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:ippt/models/component.model.dart';
 import 'package:ippt/models/geometry.model.dart';

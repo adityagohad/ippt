@@ -21,7 +21,7 @@ class BuilderPage extends StatelessWidget {
                 actions: [
                   IconButton(
                       onPressed: () {
-                        GetIt.I<IpptBloc>().add(SavePresentation());
+                        _showDialog(context);
                       },
                       icon: const Icon(Icons.save_as_rounded))
                 ],
@@ -88,6 +88,72 @@ class BuilderPage extends StatelessWidget {
               ));
         },
       ),
+    );
+  }
+
+  void _showDialog(BuildContext context) {
+    final TextEditingController fileNameController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Close button at top right
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ),
+
+              const Text(
+                'Enter File Name',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Text field for file name
+              TextField(
+                controller: fileNameController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter file name',
+                  border: OutlineInputBorder(),
+                ),
+                autofocus: true,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Save button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Handle save action here
+                    final fileName = fileNameController.text;
+                    if (fileName.isNotEmpty) {
+                      GetIt.I<IpptBloc>().add(SavePresentation());
+                      Navigator.of(context).pop();
+                      fileNameController.clear();
+                    }
+                  },
+                  child: const Text('Save'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
